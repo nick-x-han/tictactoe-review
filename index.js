@@ -22,8 +22,8 @@ function Gameboard() {
   const evaluate = (player) => {
     const simplifiedBoard = [];
     board.forEach((row) => {
-      row.forEach((col) => {
-        simplifiedBoard.push(col.getValue());
+      row.forEach((cell) => {
+        simplifiedBoard.push(cell.getValue());
       });
     });
 
@@ -49,7 +49,7 @@ function Gameboard() {
     }
 
     //checking for tie
-    if (!simplifiedBoard.find((cell) => cell.getValue() === 0)) {
+    if (!simplifiedBoard.some((cell) => cell === 0)) {
       return "tie";
     }
     return 0;
@@ -121,10 +121,12 @@ function GameController(
       return;
     }
 
-    if (board.evaluate(getActivePlayer()) === 0) {
+    const result = board.evaluate(getActivePlayer());
+
+    if (result === 0) {
       switchPlayerTurn();
       printNewRound();
-    } else if (board.evaluate(getActivePlayer()) === "tie") {
+    } else if (result === "tie") {
       console.log("It's a tie");
     } else {
       console.log(`${getActivePlayer().name} has won`);
@@ -137,20 +139,58 @@ function GameController(
   return {
     playRound,
     getActivePlayer,
+    getBoard: board.getBoard,
   };
 }
 
-const game = GameController();
+// const game = GameController();
 
-// function ScreenController() {
-//     const game = GameController();
-//     const activeDisplay = document.querySelector(".turn");
-//     const boardDiv = document.querySelector(".board");
-//     console.log(game.getBoard());
-//     for (const cell of game.getBoard()) {
-//         alert(cell);
-//     }
+function ScreenController() {
+  const game = GameController();
+  const playerTurnDiv = document.querySelector(".turn");
+  const boardDiv = document.querySelector(".board");
 
-// }
+  const updateScreen = () => {
+    // clear the board
+    boardDiv.textContent = "";
 
-// ScreenController();
+    // get the newest version of the board and player turn
+    const board = game.getBoard();
+    const activePlayer = game.getActivePlayer();
+
+    // Display player's turn
+    playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
+
+    // Render board squares
+    board.forEach((row, i) => {
+      row.forEach((cell, j) => {
+        // Anything clickable should be a button!!
+        const cellButton = document.createElement("button");
+        cellButton.classList.add("cell");
+
+        cellButton.dataset.row = i;
+        cellButton.dataset.column = j;
+
+        cellButton.textContent = cell.getValue();
+        boardDiv.appendChild(cellButton);
+      });
+    });
+  };
+
+  // Add event listener for the board
+  function clickHandlerBoard(e) {
+    const selectedColumn = e.target.dataset.column;
+    const selectedRow = e.target.dataset.row;
+    // Make sure I've clicked a column and not the gaps in between
+    if (!selectedColumn || !selectedRow) return;
+
+    game.playRound(selectedRow, selectedColumn);
+    updateScreen();
+  }
+  boardDiv.addEventListener("click", clickHandlerBoard);
+
+  // Initial render
+  updateScreen();
+}
+
+ScreenController();
