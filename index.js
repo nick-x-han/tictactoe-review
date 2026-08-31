@@ -12,13 +12,6 @@ function Gameboard() {
 
   const getBoard = () => board;
 
-  const move = (player, row, column) => {
-    if (board[row][column].getValue() === 0) {
-      board[row][column].addToken(player);
-      return true;
-    } else return false;
-  };
-
   const evaluate = (player) => {
     const simplifiedBoard = [];
     board.forEach((row) => {
@@ -52,7 +45,14 @@ function Gameboard() {
     if (!simplifiedBoard.some((cell) => cell === 0)) {
       return "tie";
     }
-    return 0;
+    return "continue";
+  };
+
+  const move = (player, row, column) => {
+    if (board[row][column].getValue() === 0) {
+      board[row][column].addToken(player);
+      return evaluate(player);
+    } else return "duplicate";
   };
 
   const printBoard = () => {
@@ -62,7 +62,7 @@ function Gameboard() {
     console.log(boardWithCellValues);
   };
 
-  return { getBoard, move, evaluate, printBoard };
+  return { getBoard, move, printBoard };
 }
 
 function Cell() {
@@ -99,6 +99,8 @@ function GameController(
     },
   ];
 
+  let gameState = 0;
+
   let activePlayer = players[0];
 
   const switchPlayerTurn = () => {
@@ -112,25 +114,29 @@ function GameController(
   };
 
   const playRound = (row, column) => {
+    if (gameState !== 0) return;
+
     console.log(
       `Putting ${getActivePlayer().name}'s token into row ${row} column ${column}...`,
     );
 
-    if (!board.move(getActivePlayer().token, row, column)) {
-      console.log("Already used");
+    let moveResult = board.move(getActivePlayer().token, row, column);
+
+    if (moveResult === "tie") {
+      gameState = -1;
+      console.log("It's game over");
       return;
-    }
-
-    const result = board.evaluate(getActivePlayer());
-
-    if (result === 0) {
+    } else if (moveResult === 1 || moveResult === 2) {
+      gameState = getActivePlayer();
+      console.log(`${getActivePlayer().name} has won`);
+    } else if (moveResult === "duplicate") {
+      console.log("Already played");
+    } else if (moveResult === "continue") {
       switchPlayerTurn();
       printNewRound();
-    } else if (result === "tie") {
-      console.log("It's a tie");
-    } else {
-      console.log(`${getActivePlayer().name} has won`);
     }
+
+    return moveResult;
   };
 
   // Initial play game message
