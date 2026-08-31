@@ -153,10 +153,13 @@ function GameController(
 // const game = GameController();
 
 function ScreenController() {
-  let game = GameController();
   const playerTurnDiv = document.querySelector(".turn");
   const boardDiv = document.querySelector(".board");
   const resetButton = document.querySelector("#reset");
+  const player1Input = document.querySelector("#player1");
+  const player2Input = document.querySelector("#player2");
+
+  let game = GameController();
 
   const updateScreen = () => {
     // clear the board
@@ -208,14 +211,20 @@ function ScreenController() {
   boardDiv.addEventListener("click", clickHandlerBoard);
 
   function reset() {
-    game = new GameController();
+    resetButton.textContent = 'Reset';
+    if (!player1Input.value) player1Input.value = 'Player One';
+    if (!player2Input.value) player2Input.value = 'Player Two';
+
+    game = new GameController(player1Input.value, player2Input.value);
     updateScreen();
   }
 
   resetButton.addEventListener("click", (e) => reset());
 
+  
+
   // Initial render
-  updateScreen();
+//   updateScreen();
 }
 
 ScreenController();
