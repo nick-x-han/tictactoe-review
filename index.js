@@ -19,9 +19,36 @@ function Gameboard() {
     } else return false;
   };
 
-  const evaluate = (player) => {
+  const evaluate = () => {
+    const simplifiedBoard = [];
+    board.forEach((row) => {
+      row.forEach((col) => {
+        simplifiedBoard.push(col.getValue());
+      });
+    });
 
-  }
+    const wins = [
+      [0, 4, 8],
+      [2, 4, 6],
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+    ];
+
+    for (const [a, b, c] of wins) {
+      if (
+        simplifiedBoard[a] !== 0 &&
+        simplifiedBoard[a] === simplifiedBoard[b] &&
+        simplifiedBoard[a] === simplifiedBoard[c]
+      ) {
+        return true;
+      }
+    }
+    return false;
+  };
 
   const printBoard = () => {
     const boardWithCellValues = board.map((row) =>
@@ -30,7 +57,7 @@ function Gameboard() {
     console.log(boardWithCellValues);
   };
 
-  return { getBoard, move, printBoard };
+  return { getBoard, move, evaluate, printBoard };
 }
 
 function Cell() {
@@ -81,18 +108,20 @@ function GameController(
 
   const playRound = (row, column) => {
     console.log(
-      `Putting ${getActivePlayer().name}'s token into row ${row} column ${column}...`
+      `Putting ${getActivePlayer().name}'s token into row ${row} column ${column}...`,
     );
+    
     if (!board.move(getActivePlayer().token, row, column)) {
-        console.log("Already used");
-        return;
+      console.log("Already used");
+      return;
     }
-        
 
-    // board.evaluate();
-
-    switchPlayerTurn();
-    printNewRound();
+    if (!board.evaluate()) {
+      switchPlayerTurn();
+      printNewRound();
+    } else {
+      console.log("${getActivePlayer().name} has won");
+    }
   };
 
   // Initial play game message
@@ -114,7 +143,6 @@ const game = GameController();
 //     for (const cell of game.getBoard()) {
 //         alert(cell);
 //     }
-
 
 // }
 
