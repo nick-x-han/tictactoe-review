@@ -19,7 +19,7 @@ function Gameboard() {
     } else return false;
   };
 
-  const evaluate = () => {
+  const evaluate = (player) => {
     const simplifiedBoard = [];
     board.forEach((row) => {
       row.forEach((col) => {
@@ -44,10 +44,15 @@ function Gameboard() {
         simplifiedBoard[a] === simplifiedBoard[b] &&
         simplifiedBoard[a] === simplifiedBoard[c]
       ) {
-        return true;
+        return player;
       }
     }
-    return false;
+
+    //checking for tie
+    if (!simplifiedBoard.find((cell) => cell.getValue() === 0)) {
+      return "tie";
+    }
+    return 0;
   };
 
   const printBoard = () => {
@@ -110,17 +115,19 @@ function GameController(
     console.log(
       `Putting ${getActivePlayer().name}'s token into row ${row} column ${column}...`,
     );
-    
+
     if (!board.move(getActivePlayer().token, row, column)) {
       console.log("Already used");
       return;
     }
 
-    if (!board.evaluate()) {
+    if (board.evaluate(getActivePlayer()) === 0) {
       switchPlayerTurn();
       printNewRound();
+    } else if (board.evaluate(getActivePlayer()) === "tie") {
+      console.log("It's a tie");
     } else {
-      console.log("${getActivePlayer().name} has won");
+      console.log(`${getActivePlayer().name} has won`);
     }
   };
 
