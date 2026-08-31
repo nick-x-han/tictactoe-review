@@ -103,6 +103,7 @@ function GameController(
 
   let activePlayer = players[0];
 
+  const getGameState = () => gameState;
   const switchPlayerTurn = () => {
     activePlayer = activePlayer === players[0] ? players[1] : players[0];
   };
@@ -127,7 +128,7 @@ function GameController(
       console.log("It's game over");
       return;
     } else if (moveResult === 1 || moveResult === 2) {
-      gameState = getActivePlayer();
+      gameState = getActivePlayer().token;
       console.log(`${getActivePlayer().name} has won`);
     } else if (moveResult === "duplicate") {
       console.log("Already played");
@@ -146,6 +147,7 @@ function GameController(
     playRound,
     getActivePlayer,
     getBoard: board.getBoard,
+    getGameState,
   };
 }
 
@@ -164,8 +166,15 @@ function ScreenController() {
     const board = game.getBoard();
     const activePlayer = game.getActivePlayer();
 
-    // Display player's turn
-    playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
+    const gameState = game.getGameState();
+    if (gameState === 0)
+        playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
+    else if (gameState === 1 || gameState === 2) {
+        playerTurnDiv.textContent = `${activePlayer.name}'s victory!`;
+    }
+    else {
+        playerTurnDiv.textContent = "It's a tie!";
+    }
 
     // Render board squares
     board.forEach((row, i) => {
