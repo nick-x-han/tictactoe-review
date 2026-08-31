@@ -91,11 +91,11 @@ function GameController(
   const players = [
     {
       name: playerOneName,
-      token: 1,
+      token: 'X',
     },
     {
       name: playerTwoName,
-      token: 2,
+      token: 'O',
     },
   ];
 
@@ -126,8 +126,7 @@ function GameController(
     if (moveResult === "tie") {
       gameState = -1;
       console.log("It's game over");
-      return;
-    } else if (moveResult === 1 || moveResult === 2) {
+    } else if (moveResult === players[0].token || moveResult === players[1].token) {
       gameState = getActivePlayer().token;
       console.log(`${getActivePlayer().name} has won`);
     } else if (moveResult === "duplicate") {
@@ -169,7 +168,7 @@ function ScreenController() {
     const gameState = game.getGameState();
     if (gameState === 0)
         playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
-    else if (gameState === 1 || gameState === 2) {
+    else if (gameState === activePlayer.token) {
         playerTurnDiv.textContent = `${activePlayer.name}'s victory!`;
     }
     else {
@@ -186,7 +185,9 @@ function ScreenController() {
         cellButton.dataset.row = i;
         cellButton.dataset.column = j;
 
-        cellButton.textContent = cell.getValue();
+        let cellValue = cell.getValue();
+        if (cellValue !== 0)
+            cellButton.textContent = cell.getValue();
         boardDiv.appendChild(cellButton);
       });
     });
