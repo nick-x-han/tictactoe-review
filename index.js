@@ -15,8 +15,13 @@ function Gameboard() {
   const move = (player, row, column) => {
     if (board[row][column].getValue() === 0) {
       board[row][column].addToken(player);
-    } else return;
+      return true;
+    } else return false;
   };
+
+  const evaluate = (player) => {
+
+  }
 
   const printBoard = () => {
     const boardWithCellValues = board.map((row) =>
@@ -78,7 +83,13 @@ function GameController(
     console.log(
       `Putting ${getActivePlayer().name}'s token into row ${row} column ${column}...`
     );
-    board.move(getActivePlayer().token, row, column);
+    if (!board.move(getActivePlayer().token, row, column)) {
+        console.log("Already used");
+        return;
+    }
+        
+
+    // board.evaluate();
 
     switchPlayerTurn();
     printNewRound();
@@ -95,3 +106,16 @@ function GameController(
 
 const game = GameController();
 
+// function ScreenController() {
+//     const game = GameController();
+//     const activeDisplay = document.querySelector(".turn");
+//     const boardDiv = document.querySelector(".board");
+//     console.log(game.getBoard());
+//     for (const cell of game.getBoard()) {
+//         alert(cell);
+//     }
+
+
+// }
+
+// ScreenController();
