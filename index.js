@@ -153,9 +153,10 @@ function GameController(
 // const game = GameController();
 
 function ScreenController() {
-  const game = GameController();
+  let game = GameController();
   const playerTurnDiv = document.querySelector(".turn");
   const boardDiv = document.querySelector(".board");
+  const resetButton = document.querySelector("#reset");
 
   const updateScreen = () => {
     // clear the board
@@ -203,7 +204,15 @@ function ScreenController() {
     game.playRound(selectedRow, selectedColumn);
     updateScreen();
   }
+
   boardDiv.addEventListener("click", clickHandlerBoard);
+
+  function reset() {
+    game = new GameController();
+    updateScreen();
+  }
+
+  resetButton.addEventListener("click", (e) => reset());
 
   // Initial render
   updateScreen();
