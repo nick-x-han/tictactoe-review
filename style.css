@@ -37,5 +37,25 @@ input[type='text']:not(:focus) {
     background-color: red;
     border: none;
     color: black;
+    font-size: 16px;
 }
+
+.hotbar {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+#reset {
+    width: 100px;
+    height: 25px;
+    border: none;
+    border-radius: 32px;
+    text-transform: uppercase;
+
+    &:hover {
+        background-color: red;
+    }
+}
+
 
